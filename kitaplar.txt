@@ -1,0 +1,2 @@
+Python Programlama,John Doe,2020,300
+Veri Bilimi Kýlavuzu,Jane Smith,2018,450

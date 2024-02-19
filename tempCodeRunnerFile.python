@@ -1,0 +1,127 @@
+import tkinter as tk
+from tkinter import messagebox
+
+class Library:
+    def __init__(self):
+        self.file = open("books.txt", "a+")
+
+    def __del__(self):
+        self.file.close()
+
+    def list_books(self):
+        self.file.seek(0)
+        books = self.file.readlines()
+        if books:
+            book_list = ""
+            for book in books:
+                book_info = book.strip().split(',')
+                book_list += f"Kitap Adı: {book_info[0]}, Yazar: {book_info[1]}\n"
+            messagebox.showinfo("Kitap Listesi", book_list)
+        else:
+            messagebox.showinfo("Kitap Listesi", "Kütüphane boş.")
+
+    def add_book(self, title, author, release_year, num_pages):
+        book_info = f"{title},{author},{release_year},{num_pages}\n"
+        self.file.write(book_info)
+        messagebox.showinfo("Kitap Ekleme", "Kitap başarıyla eklendi.")
+
+    def remove_book(self, title):
+        books = self.file.readlines()
+        self.file.seek(0)
+        updated_books = [book for book in books if title not in book]
+        self.file.truncate(0)
+        self.file.seek(0)
+        for book in updated_books:
+            self.file.write(book)
+        messagebox.showinfo("Kitap Silme", "Kitap başarıyla silindi.")
+
+class LibraryGUI:
+    def __init__(self, master):
+        self.master = master
+        master.title("Kütüphane Yönetim Sistemi")
+        master.geometry("400x200")
+        master.configure(bg="#ffc0cb")  # Pembe arka plan rengi
+
+        self.library = Library()
+
+        self.list_books_button = tk.Button(master, text="Kitapları Listele", command=self.library.list_books, bg="#ff1493", fg="#fff", padx=10, pady=5, border=0)  # Pembe düğme rengi
+        self.list_books_button.pack(pady=10)
+
+        self.add_book_frame = tk.Frame(master, bg="#ffc0cb")
+        self.add_book_frame.pack(pady=5)
+
+        tk.Label(self.add_book_frame, text="Kitap Adı:", bg="#ffc0cb").grid(row=0, column=0)
+        tk.Label(self.add_book_frame, text="Yazar:", bg="#ffc0cb").grid(row=1, column=0)
+        tk.Label(self.add_book_frame, text="Yayın Yılı:", bg="#ffc0cb").grid(row=2, column=0)
+        tk.Label(self.add_book_frame, text="Sayfa Sayısı:", bg="#ffc0cb").grid(row=3, column=0)
+
+        self.title_entry = tk.Entry(self.add_book_frame)
+        self.title_entry.grid(row=0, column=1)
+        self.author_entry = tk.Entry(self.add_book_frame)
+        self.author_entry.grid(row=1, column=1)
+        self.release_year_entry = tk.Entry(self.add_book_frame)
+        self.release_year_entry.grid(row=2, column=1)
+        self.num_pages_entry = tk.Entry(self.add_book_frame)
+        self.num_pages_entry.grid(row=3, column=1)
+
+        self.add_book_button = tk.Button(master, text="Kitap Ekle", command=self.add_book, bg="#ff1493", fg="#fff", padx=10, pady=5, border=0)  # Pembe düğme rengi
+        self.add_book_button.pack()
+
+        self.remove_book_frame = tk.Frame(master, bg="#ffc0cb")
+        self.remove_book_frame.pack(pady=5)
+
+        tk.Label(self.remove_book_frame, text="Silmek İstediğiniz Kitabın Adı:", bg="#ffc0cb").grid(row=0, column=0)
+        self.remove_title_entry = tk.Entry(self.remove_book_frame)
+        self.remove_title_entry.grid(row=0, column=1)
+
+        self.remove_book_button = tk.Button(master, text="Kitap Sil", command=self.remove_book, bg="#ff1493", fg="#fff", padx=10, pady=5, border=0)  # Pembe düğme rengi
+        self.remove_book_button.pack()
+
+    def add_book(self):
+        title = self.title_entry.get()
+        author = self.author_entry.get()
+        release_year = self.release_year_entry.get()
+        num_pages = self.num_pages_entry.get()
+        self.library.add_book(title, author, release_year, num_pages)
+
+    def remove_book(self):
+        title = self.remove_title_entry.get()
+        self.library.remove_book(title)
+
+def console_interface():
+    print("*** MENÜ ***")
+    print("1) Kitapları Listele")
+    print("2) Kitap Ekle")
+    print("3) Kitap Sil")
+
+    choice = input("Lütfen bir seçenek girin (1/2/3): ")
+
+    lib = Library()
+
+    if choice == '1':
+        lib.list_books()
+    elif choice == '2':
+        title = input("Kitap Adı: ")
+        author = input("Yazar: ")
+        release_year = input("Yayın Yılı: ")
+        num_pages = input("Sayfa Sayısı: ")
+        lib.add_book(title, author, release_year, num_pages)
+    elif choice == '3':
+        title = input("Silmek İstediğiniz Kitabın Adı: ")
+        lib.remove_book(title)
+    else:
+        print("Geçersiz seçenek. Lütfen 1, 2 veya 3 girin.")
+
+if __name__ == "__main__":
+    interface_choice = input("Konsol arayüzü için 'c', Tkinter arayüzü için 't' girin: ")
+    if interface_choice == 'c':
+        console_interface()
+    elif interface_choice == 't':
+        root = tk.Tk()
+        app = LibraryGUI(root)
+        root.mainloop()
+    else:
+        print("Geçersiz seçenek. Lütfen 'c' veya 't' girin.")
+
+
+        

@@ -1,0 +1,2 @@
+python -u "c:\Users\Sueda\OneDrive\Masaüstü\term\tempCodeRunnerFile.python",david,2020,345
+araba sevdasý,recaizade mahmut ekrem,2010,200
